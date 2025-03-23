@@ -4,3 +4,4 @@ flask-login
 apscheduler
 openai
 python-dotenv
+flask-wtf
