@@ -22,8 +22,6 @@ def add_task():
         theme_list = request.form['theme_list']
         article_list = request.form['article_list']
         platforms = request.form.getlist('platforms')
-        schedule_time = request.form['schedule_time']
-        schedule_days = request.form['schedule_days']
         is_active = request.form['is_active'] == 'active'
         new_task = Task(
             title=title,
@@ -33,7 +31,6 @@ def add_task():
             theme_list=theme_list,
             article_list=article_list,
             platforms=platforms,
-            schedule=f"{schedule_time} every {schedule_days} days",
             is_active=is_active
         )
         db.session.add(new_task)
@@ -54,7 +51,6 @@ def edit_task(task_id):
         task.theme_list = request.form['theme_list']
         task.article_list = request.form['article_list']
         task.platforms = request.form.getlist('platforms')
-        task.schedule = f"{request.form['schedule_time']} every {request.form['schedule_days']} days"
         task.is_active = request.form['is_active'] == 'active'
         db.session.commit()
         flash('Task updated successfully')
@@ -76,3 +72,26 @@ def delete_task(task_id):
     db.session.commit()
     flash('Task deleted successfully')
     return redirect(url_for('tasks.task_list'))
+
+@tasks_bp.route('/platforms')
+@login_required
+def platform_list():
+    platforms = ["Platform 1", "Platform 2", "Platform 3"]  # Замените на реальный список платформ из базы данных
+    return render_template('platforms/list.html', platforms=platforms)
+
+@tasks_bp.route('/platforms/add', methods=['GET', 'POST'])
+@login_required
+def add_platform():
+    if request.method == 'POST':
+        platform_name = request.form['platform_name']
+        # Добавьте логику для сохранения новой платформы в базу данных
+        flash('Platform added successfully')
+        return redirect(url_for('platforms.platform_list'))
+    return render_template('platforms/add.html')
+
+@tasks_bp.route('/platforms/delete/<string:platform_name>', methods=['POST'])
+@login_required
+def delete_platform(platform_name):
+    # Добавьте логику для удаления платформы из базы данных
+    flash('Platform deleted successfully')
+    return redirect(url_for('platforms.platform_list'))
