@@ -3,46 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Task</title>
+    <title>Edit Task</title>
 </head>
 <body>
-    <h1>Add Task</h1>
+    <h1>Edit Task</h1>
     <form method="POST">
         <p>
             <label for="title">Title:</label><br>
-            <input type="text" name="title" id="title" required>
+            <input type="text" name="title" id="title" value="{{ task.title }}" required>
         </p>
         <p>
             <label for="theme_prompt">Theme Prompt (Google Docs URL):</label><br>
-            <input type="url" name="theme_prompt" id="theme_prompt" required>
+            <input type="url" name="theme_prompt" id="theme_prompt" value="{{ task.theme_prompt }}" required>
         </p>
         <p>
             <label for="article_prompt">Article Prompt (Google Docs URL):</label><br>
-            <input type="url" name="article_prompt" id="article_prompt" required>
+            <input type="url" name="article_prompt" id="article_prompt" value="{{ task.article_prompt }}" required>
         </p>
         <p>
             <label for="image_prompt">Image Prompt (Google Docs URL):</label><br>
-            <input type="url" name="image_prompt" id="image_prompt" required>
+            <input type="url" name="image_prompt" id="image_prompt" value="{{ task.image_prompt }}" required>
         </p>
         <p>
             <label for="theme_list">Theme List (Google Sheets URL):</label><br>
-            <input type="url" name="theme_list" id="theme_list" required>
+            <input type="url" name="theme_list" id="theme_list" value="{{ task.theme_list }}" required>
         </p>
         <p>
             <label for="article_list">Article List (Google Sheets URL):</label><br>
-            <input type="url" name="article_list" id="article_list" required>
+            <input type="url" name="article_list" id="article_list" value="{{ task.article_list }}" required>
         </p>
         <p>
             <label for="platforms">Platforms:</label><br>
             <select name="platforms" id="platforms" multiple required>
-                <option value="Platform 1">Platform 1</option>
-                <option value="Platform 2">Platform 2</option>
-                <option value="Platform 3">Platform 3</option>
+                <option value="Platform 1" {% if 'Platform 1' in task.platforms %}selected{% endif %}>Platform 1</option>
+                <option value="Platform 2" {% if 'Platform 2' in task.platforms %}selected{% endif %}>Platform 2</option>
+                <option value="Platform 3" {% if 'Platform 3' in task.platforms %}selected{% endif %}>Platform 3</option>
             </select>
         </p>
         <p>
             <label for="schedule">Schedule:</label><br>
-            <input type="text" name="schedule" id="schedule" required>
+            <input type="text" name="schedule" id="schedule" value="{{ task.schedule }}" required>
         </p>
         <p><button type="submit">Save</button></p>
     </form>

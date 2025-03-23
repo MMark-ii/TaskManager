@@ -10,7 +10,11 @@
     <a href="{{ url_for('tasks.add_task') }}">Add Task</a>
     <ul>
         {% for task in tasks %}
-            <li>{{ task.title }}</li>
+            <li>
+                <form action="{{ url_for('tasks.edit_task', task_id=task.id) }}" method="GET">
+                    <button type="submit">{{ task.title }}</button>
+                </form>
+            </li>
         {% endfor %}
     </ul>
 </body>

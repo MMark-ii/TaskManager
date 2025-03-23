@@ -38,3 +38,21 @@ def add_task():
         flash('Task added successfully')
         return redirect(url_for('tasks.task_list'))
     return render_template('tasks/add.html')
+
+@tasks_bp.route('/tasks/edit/<int:task_id>', methods=['GET', 'POST'])
+@login_required
+def edit_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    if request.method == 'POST':
+        task.title = request.form['title']
+        task.theme_prompt = request.form['theme_prompt']
+        task.article_prompt = request.form['article_prompt']
+        task.image_prompt = request.form['image_prompt']
+        task.theme_list = request.form['theme_list']
+        task.article_list = request.form['article_list']
+        task.platforms = request.form.getlist('platforms')
+        task.schedule = request.form['schedule']
+        db.session.commit()
+        flash('Task updated successfully')
+        return redirect(url_for('tasks.task_list'))
+    return render_template('tasks/edit.html', task=task)
