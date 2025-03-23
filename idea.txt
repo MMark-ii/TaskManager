@@ -1,0 +1,128 @@
+
+
+Давайте разработаем архитектуру приложения. Предлагаю следующую структуру:
+
+```bash
+c:\Users\User\Documents\git\TaskManager\
+├── app/
+│   ├── auth/
+│   │   ├── routes.py
+│   │   └── templates/
+│   ├── tasks/
+│   │   ├── models.py
+│   │   ├── routes.py
+│   │   └── templates/
+│   ├── platforms/
+│   │   ├── scripts/
+│   │   ├── models.py
+│   │   └── routes.py
+│   ├── templates/
+│   ├── static/
+│   ├── __init__.py
+│   └── config.py
+├── content_generator/
+│   ├── generator.py
+│   └── requirements.txt
+├── requirements.txt
+└── run.py
+```
+
+1. Основные компоненты (Flask + SQLAlchemy):
+
+```python:c:\Users\User\Documents\git\TaskManager\app\__init__.py
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+
+db = SQLAlchemy()
+login_manager = LoginManager()
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object('app.config.Config')
+    
+    db.init_app(app)
+    login_manager.init_app(app)
+    
+    with app.app_context():
+        from .auth.routes import auth_bp
+        from .tasks.routes import tasks_bp
+        from .platforms.routes import platforms_bp
+        
+        app.register_blueprint(auth_bp)
+        app.register_blueprint(tasks_bp)
+        app.register_blueprint(platforms_bp)
+        
+        db.create_all()
+        
+    return app
+```
+
+2. Модель задачи:
+
+```python:c:\Users\User\Documents\git\TaskManager\app\tasks\models.py
+from app import db
+from datetime import datetime
+
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    theme_prompt = db.Column(db.Text)
+    article_prompt = db.Column(db.Text)
+    image_prompt = db.Column(db.Text)
+    platforms = db.Column(db.JSON)
+    schedule = db.Column(db.String(50))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+```
+
+3. Пример роутинга для задач:
+
+```python:c:\Users\User\Documents\git\TaskManager\app\tasks\routes.py
+from flask import Blueprint, render_template
+from flask_login import login_required
+from .models import Task
+
+tasks_bp = Blueprint('tasks', __name__, template_folder='templates')
+
+@tasks_bp.route('/tasks')
+@login_required
+def task_list():
+    tasks = Task.query.all()
+    return render_template('tasks/list.html', tasks=tasks)
+```
+
+4. Генератор контента (пример):
+
+```python:c:\Users\User\Documents\git\TaskManager\content_generator\generator.py
+import openai
+
+class ContentGenerator:
+    def __init__(self, api_key):
+        openai.api_key = api_key
+    
+    def generate_theme(self, prompt):
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=prompt,
+            max_tokens=150
+        )
+        return response.choices[0].text.strip()
+    
+    # Добавьте методы для генерации статей и изображений
+```
+
+Для запуска установите зависимости:
+
+```bash
+pip install flask flask-sqlalchemy flask-login apscheduler openai python-dotenv
+```
+
+Следующие шаги для разработки:
+1. Настройте базу данных в `config.py`
+2. Реализуйте аутентификацию (Flask-Login)
+3. Добавьте планировщик задач (APScheduler)
+4. Разработайте интерфейс администратора для управления площадками
+5. Настройте интеграцию с генератором контента
+
+Хотите подробнее рассмотреть какой-то конкретный компонент?
