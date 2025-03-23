@@ -52,6 +52,11 @@
             <label for="schedule_days">Schedule Days:</label><br>
             <input type="number" name="schedule_days" id="schedule_days" step="0.1" required>
         </p>
+        <p>
+            <label>Status:</label><br>
+            <input type="radio" name="is_active" value="active" checked> Active<br>
+            <input type="radio" name="is_active" value="inactive"> Inactive
+        </p>
         <p><button type="submit">Save</button></p>
     </form>
     <a href="{{ url_for('tasks.task_list') }}">Back</a>
