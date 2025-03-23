@@ -26,6 +26,11 @@ def logout():
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
+    # Проверка наличия пользователей в базе данных
+    if User.query.first():
+        flash('Registration is closed.')
+        return redirect(url_for('auth.login'))
+    
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data)
