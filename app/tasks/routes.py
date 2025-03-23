@@ -60,3 +60,19 @@ def edit_task(task_id):
         flash('Task updated successfully')
         return redirect(url_for('tasks.task_list'))
     return render_template('tasks/edit.html', task=task)
+
+@tasks_bp.route('/tasks/log/<int:task_id>')
+@login_required
+def task_log(task_id):
+    task = Task.query.get_or_404(task_id)
+    # Здесь вы можете добавить логику для отображения журнала задачи
+    return render_template('tasks/log.html', task=task)
+
+@tasks_bp.route('/tasks/delete/<int:task_id>', methods=['POST'])
+@login_required
+def delete_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    db.session.delete(task)
+    db.session.commit()
+    flash('Task deleted successfully')
+    return redirect(url_for('tasks.task_list'))
