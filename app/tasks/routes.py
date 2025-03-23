@@ -19,6 +19,8 @@ def add_task():
         theme_prompt = request.form['theme_prompt']
         article_prompt = request.form['article_prompt']
         image_prompt = request.form['image_prompt']
+        theme_list = request.form['theme_list']
+        article_list = request.form['article_list']
         platforms = request.form.getlist('platforms')
         schedule = request.form['schedule']
         new_task = Task(
@@ -26,6 +28,8 @@ def add_task():
             theme_prompt=theme_prompt,
             article_prompt=article_prompt,
             image_prompt=image_prompt,
+            theme_list=theme_list,
+            article_list=article_list,
             platforms=platforms,
             schedule=schedule
         )

@@ -7,6 +7,8 @@ class Task(db.Model):
     theme_prompt = db.Column(db.Text)
     article_prompt = db.Column(db.Text)
     image_prompt = db.Column(db.Text)
+    theme_list = db.Column(db.String(200))
+    article_list = db.Column(db.String(200))
     platforms = db.Column(db.JSON)
     schedule = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
