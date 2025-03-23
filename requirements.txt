@@ -1,0 +1,6 @@
+flask
+flask-sqlalchemy
+flask-login
+apscheduler
+openai
+python-dotenv
