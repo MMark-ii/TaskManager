@@ -22,7 +22,8 @@ def add_task():
         theme_list = request.form['theme_list']
         article_list = request.form['article_list']
         platforms = request.form.getlist('platforms')
-        schedule = request.form['schedule']
+        schedule_time = request.form['schedule_time']
+        schedule_days = request.form['schedule_days']
         new_task = Task(
             title=title,
             theme_prompt=theme_prompt,
@@ -31,7 +32,7 @@ def add_task():
             theme_list=theme_list,
             article_list=article_list,
             platforms=platforms,
-            schedule=schedule
+            schedule=f"{schedule_time} every {schedule_days} days"
         )
         db.session.add(new_task)
         db.session.commit()
@@ -51,7 +52,7 @@ def edit_task(task_id):
         task.theme_list = request.form['theme_list']
         task.article_list = request.form['article_list']
         task.platforms = request.form.getlist('platforms')
-        task.schedule = request.form['schedule']
+        task.schedule = f"{request.form['schedule_time']} every {request.form['schedule_days']} days"
         db.session.commit()
         flash('Task updated successfully')
         return redirect(url_for('tasks.task_list'))

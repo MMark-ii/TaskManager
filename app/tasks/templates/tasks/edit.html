@@ -41,8 +41,12 @@
             </select>
         </p>
         <p>
-            <label for="schedule">Schedule:</label><br>
-            <input type="text" name="schedule" id="schedule" value="{{ task.schedule }}" required>
+            <label for="schedule_time">Schedule Time (HH:MM):</label><br>
+            <input type="time" name="schedule_time" id="schedule_time" value="{{ task.schedule.split(' ')[0] }}" required>
+        </p>
+        <p>
+            <label for="schedule_days">Schedule Days:</label><br>
+            <input type="number" name="schedule_days" id="schedule_days" step="0.1" value="{{ task.schedule.split(' ')[2] }}" required>
         </p>
         <p><button type="submit">Save</button></p>
     </form>
