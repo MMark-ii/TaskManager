@@ -34,6 +34,4 @@ def create_app():
         app.register_blueprint(tasks_bp)
         app.register_blueprint(platforms_bp)
         
-        db.create_all()
-        
     return app
