@@ -12,7 +12,31 @@
             <label for="title">Title:</label><br>
             <input type="text" name="title" id="title" required>
         </p>
-        <p><button type="submit">Add Task</button></p>
+        <p>
+            <label for="theme_prompt">Theme Prompt:</label><br>
+            <input type="text" name="theme_prompt" id="theme_prompt" required>
+        </p>
+        <p>
+            <label for="article_prompt">Article Prompt:</label><br>
+            <input type="text" name="article_prompt" id="article_prompt" required>
+        </p>
+        <p>
+            <label for="image_prompt">Image Prompt:</label><br>
+            <input type="text" name="image_prompt" id="image_prompt" required>
+        </p>
+        <p>
+            <label for="platforms">Platforms:</label><br>
+            <select name="platforms" id="platforms" multiple required>
+                <option value="Platform 1">Platform 1</option>
+                <option value="Platform 2">Platform 2</option>
+                <option value="Platform 3">Platform 3</option>
+            </select>
+        </p>
+        <p>
+            <label for="schedule">Schedule:</label><br>
+            <input type="text" name="schedule" id="schedule" required>
+        </p>
+        <p><button type="submit">Save</button></p>
     </form>
 </body>
 </html>

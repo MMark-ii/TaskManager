@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required
 from .models import Task
 from app import db
@@ -16,7 +16,19 @@ def task_list():
 def add_task():
     if request.method == 'POST':
         title = request.form['title']
-        new_task = Task(title=title)
+        theme_prompt = request.form['theme_prompt']
+        article_prompt = request.form['article_prompt']
+        image_prompt = request.form['image_prompt']
+        platforms = request.form.getlist('platforms')
+        schedule = request.form['schedule']
+        new_task = Task(
+            title=title,
+            theme_prompt=theme_prompt,
+            article_prompt=article_prompt,
+            image_prompt=image_prompt,
+            platforms=platforms,
+            schedule=schedule
+        )
         db.session.add(new_task)
         db.session.commit()
         flash('Task added successfully')
