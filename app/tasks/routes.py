@@ -22,6 +22,8 @@ def add_task():
         theme_list = request.form['theme_list']
         article_list = request.form['article_list']
         platforms = request.form.getlist('platforms')
+        schedule_time = request.form['schedule_time']
+        schedule_days = request.form['schedule_days']
         is_active = request.form['is_active'] == 'active'
         new_task = Task(
             title=title,
@@ -31,6 +33,8 @@ def add_task():
             theme_list=theme_list,
             article_list=article_list,
             platforms=platforms,
+            schedule_time=schedule_time,
+            schedule_days=schedule_days,
             is_active=is_active
         )
         db.session.add(new_task)
@@ -51,6 +55,8 @@ def edit_task(task_id):
         task.theme_list = request.form['theme_list']
         task.article_list = request.form['article_list']
         task.platforms = request.form.getlist('platforms')
+        task.schedule_time = request.form['schedule_time']
+        task.schedule_days = request.form['schedule_days']
         task.is_active = request.form['is_active'] == 'active'
         db.session.commit()
         flash('Task updated successfully')
