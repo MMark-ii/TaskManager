@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Platform</title>
+    <title>Edit Platform</title>
 </head>
 <body>
-    <h1>Add Platform</h1>
+    <h1>Edit Platform</h1>
     <form method="POST">
         <p>
             <label for="platform_name">Platform Name:</label><br>
-            <input type="text" name="platform_name" id="platform_name" required>
+            <input type="text" name="platform_name" id="platform_name" value="{{ platform.name }}" required>
         </p>
         <p>
             <label for="platform_script">Platform Script:</label><br>
-            <input type="text" name="platform_script" id="platform_script" required>
+            <input type="text" name="platform_script" id="platform_script" value="{{ platform.script }}" required>
         </p>
         <p><button type="submit">Save</button></p>
     </form>
