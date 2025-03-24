@@ -36,9 +36,13 @@
         <p>
             <label for="platforms">Platforms:</label><br>
             <select name="platforms" id="platforms" required>
-                <option value="Platform 1" {% if 'Platform 1' in task.platforms %}selected{% endif %}>Platform 1</option>
-                <option value="Platform 2" {% if 'Platform 2' in task.platforms %}selected{% endif %}>Platform 2</option>
-                <option value="Platform 3" {% if 'Platform 3' in task.platforms %}selected{% endif %}>Platform 3</option>
+                <option value="" disabled>Select a platform</option>
+                {% for platform in all_platforms %}
+                    <option value="{{ platform.id }}" 
+                        {% if platform.id in task_platform_ids %}selected{% endif %}>
+                        {{ platform.name }}
+                    </option>
+                {% endfor %}
             </select>
             <a href="{{ url_for('platforms.platform_list') }}">Edit Platforms</a>
         </p>
