@@ -1,20 +1,17 @@
-# Исключить виртуальное окружение
-.venv/
-
-# Исключить файлы конфигурации среды
-.env
-
-# Исключить файлы кэша и временные файлы
+# Python
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*.sqlite
+myenv/
+venv/
 
-# Исключить файлы IDE
+# Database
+instance/
+
+# IDE
 .vscode/
 .idea/
+*.swp
 
-# Исключить логи
-*.log
-
-# Исключить файлы базы данных SQLite
-*.sqlite3
+# Environment
+.env
