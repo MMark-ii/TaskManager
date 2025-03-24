@@ -6,14 +6,14 @@ sudo apt install -y python3-venv python3-pip
 
 # Создание виртуального окружения
 python3 -m venv .venv
-
+#read -p " "
 # Активация виртуального окружения
 source .venv/bin/activate
-
+#read -p " "
 # Установка зависимостей
 pip install -r ./requirements.txt
 
 # Деактивация виртуального окружения
-deactivate
+# deactivate
 
 echo "Виртуальная среда и зависимости успешно установлены."
