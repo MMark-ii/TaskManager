@@ -35,8 +35,7 @@
         </p>
         <p>
             <label for="platforms">Platforms:</label><br>
-            <select name="platforms" id="platforms" required>
-                <option value="" disabled>Select a platform</option>
+            <select name="platforms" id="platforms" multiple required>  <!-- Добавлен multiple -->
                 {% for platform in all_platforms %}
                     <option value="{{ platform.id }}" 
                         {% if platform.id in task_platform_ids %}selected{% endif %}>
