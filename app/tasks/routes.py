@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required
-from .models import Task, Platform
+from app.models import Task, Platform
 from app import db
 
 tasks_bp = Blueprint('tasks', __name__, template_folder='templates')
@@ -16,13 +16,14 @@ def task_list():
 def add_task():
     if request.method == 'POST':
         try:
-            data = request.get_json()
+            data = request.form
             
             # Разрешенные поля
             allowed_fields = {
                 'title', 'theme_prompt', 
                 'article_prompt', 'image_prompt',
-                'theme_list'
+                'theme_list', 'article_list', 'platform_id',
+                'schedule_time', 'schedule_days', 'is_active'
             }
             
             # Фильтрация полей
@@ -32,21 +33,21 @@ def add_task():
                 if key in data
             }
             
+            # Если платформа не выбрана, удалите ключ platform_id из task_data
+            if not task_data.get('platform_id'):
+                task_data.pop('platform_id', None)
+            
             new_task = Task(**task_data)
             db.session.add(new_task)
             db.session.commit()
             
-            return jsonify({
-                "status": "success",
-                "task_id": new_task.id
-            }), 201
+            flash('Task added successfully')
+            return redirect(url_for('tasks.task_list'))
             
         except Exception as e:
             db.session.rollback()
-            return jsonify({
-                "status": "error",
-                "message": str(e)
-            }), 400
+            flash(f"Error: {str(e)}")
+            return redirect(url_for('tasks.add_task'))
     platforms = Platform.query.all()
     return render_template('tasks/add.html', platforms=platforms)
 
@@ -61,11 +62,10 @@ def edit_task(task_id):
         task.image_prompt = request.form['image_prompt']
         task.theme_list = request.form['theme_list']
         task.article_list = request.form['article_list']
-        task.platforms = request.form.getlist('platforms')
-        schedule_time = request.form['schedule_time']
-        schedule_days = request.form['schedule_days']
-        task.schedule = f"{schedule_time} every {schedule_days} days"
-        task.is_active = request.form['is_active'] == 'active'
+        task.platform_id = request.form.get('platform_id') or None
+        task.schedule_time = request.form['schedule_time']
+        task.schedule_days = request.form['schedule_days']
+        task.is_active = request.form['is_active']
         db.session.commit()
         flash('Task updated successfully')
         return redirect(url_for('tasks.task_list'))
@@ -110,7 +110,7 @@ def get_platform(platform_id):
 @tasks_bp.route('/platforms')
 @login_required
 def platform_list():
-    platforms = ["Platform 1", "Platform 2", "Platform 3"]  # Замените на реальный список платформ из базы данных
+    platforms = Platform.query.all()  # Получаем все платформы из БД
     return render_template('platforms/list.html', platforms=platforms)
 
 @tasks_bp.route('/platforms/add', methods=['GET', 'POST'])
@@ -118,7 +118,9 @@ def platform_list():
 def add_platform():
     if request.method == 'POST':
         platform_name = request.form['platform_name']
-        # Добавьте логику для сохранения новой платформы в базу данных
+        new_platform = Platform(name=platform_name)
+        db.session.add(new_platform)
+        db.session.commit()
         flash('Platform added successfully')
         return redirect(url_for('platforms.platform_list'))
     return render_template('platforms/add.html')
@@ -126,6 +128,9 @@ def add_platform():
 @tasks_bp.route('/platforms/delete/<string:platform_name>', methods=['POST'])
 @login_required
 def delete_platform(platform_name):
-    # Добавьте логику для удаления платформы из базы данных
-    flash('Platform deleted successfully')
+    platform = Platform.query.filter_by(name=platform_name).first()
+    if platform:
+        db.session.delete(platform)
+        db.session.commit()
+        flash('Platform deleted successfully')
     return redirect(url_for('platforms.platform_list'))

@@ -41,7 +41,7 @@ def create_app():
         from .platforms.routes import platforms_bp
         
         app.register_blueprint(auth_bp)
-        app.register_blueprint(tasks_bp, url_prefix='/tasks')  # Убедитесь, что только одна регистрация blueprint
+        app.register_blueprint(tasks_bp, url_prefix='/tasks')
         app.register_blueprint(platforms_bp)
     
     app.logger.setLevel(logging.DEBUG)

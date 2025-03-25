@@ -34,12 +34,12 @@
             <input type="url" name="article_list" id="article_list" required>
         </p>
         <p>
-            <label for="platforms">Platforms:</label><br>
-            <select name="platforms" id="platforms" required>
-                <option value="" disabled selected>Select a platform</option>
-                <option value="Platform 1">Platform 1</option>
-                <option value="Platform 2">Platform 2</option>
-                <option value="Platform 3">Platform 3</option>
+            <label for="platform_id">Platforms:</label><br>
+            <select name="platform_id">
+                <option value="" selected>None</option>
+                {% for platform in platforms %}
+                  <option value="{{ platform.id }}">{{ platform.name }}</option>
+                {% endfor %}
             </select>
             <a href="{{ url_for('platforms.platform_list') }}">Edit Platforms</a>
         </p>
@@ -56,8 +56,8 @@
             <input type="radio" name="is_active" value="active" checked> Active<br>
             <input type="radio" name="is_active" value="inactive"> Inactive
         </p>
-        <p><button type="submit">Save</button></p>
+        <p><button type="submit">Сохранить</button></p>
     </form>
-    <a href="{{ url_for('tasks.task_list') }}">Back</a>
+    <a href="{{ url_for('tasks.task_list') }}">Назад</a>
 </body>
 </html>

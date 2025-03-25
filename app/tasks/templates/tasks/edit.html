@@ -3,71 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Редактор задачи</title>
+    <title>Редактировать задачу</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>Редактор задачи</h1>
-    <form method="POST">
-        <p>
-            <label for="title">Title:</label><br>
-            <input type="text" name="title" id="title" value="{{ task.title }}" required>
-        </p>
-        <p>
-            <label for="theme_prompt">Theme Prompt (Google Docs URL):</label><br>
-            <input type="url" name="theme_prompt" id="theme_prompt" value="{{ task.theme_prompt }}" required>
-        </p>
-        <p>
-            <label for="article_prompt">Article Prompt (Google Docs URL):</label><br>
-            <input type="url" name="article_prompt" id="article_prompt" value="{{ task.article_prompt }}" required>
-        </p>
-        <p>
-            <label for="image_prompt">Image Prompt (Google Docs URL):</label><br>
-            <input type="url" name="image_prompt" id="image_prompt" value="{{ task.image_prompt }}" required>
-        </p>
-        <p>
-            <label for="theme_list">Theme List (Google Sheets URL):</label><br>
-            <input type="url" name="theme_list" id="theme_list" value="{{ task.theme_list }}" required>
-        </p>
-        <p>
-            <label for="article_list">Article List (Google Sheets URL):</label><br>
-            <input type="url" name="article_list" id="article_list" value="{{ task.article_list }}" required>
-        </p>
-        <p>
-            <label for="platforms">Platforms:</label><br>
-            <select name="platforms" id="platforms" multiple>
-                {% for platform in all_platforms %}
-                  <option value="{{ platform.id }}"
-                    {% if platform in task.platforms %}selected{% endif %}>
-                    {{ platform.name }}
-                  </option>
-                {% endfor %}
-              </select>
-            <a href="{{ url_for('platforms.platform_list') }}">Edit Platforms</a>
-        </p>
-        <p>
-            <label for="schedule_time">Schedule Time (HH:MM):</label><br>
-            <input type="time" name="schedule_time" id="schedule_time" value="{{ task.schedule.split(' ')[0] }}" required>
-        </p>
-        <p>
-            <label for="schedule_days">Schedule Days:</label><br>
-            <input type="number" name="schedule_days" id="schedule_days" step="0.1" value="{{ task.schedule.split(' ')[2] }}" required>
-        </p>
-        <p>
-            <label>Status:</label><br>
-            <input type="radio" name="is_active" value="active" {% if task.is_active %}checked{% endif %}> Active<br>
-            <input type="radio" name="is_active" value="inactive" {% if not task.is_active %}checked{% endif %}> Inactive
-        </p>
-        <p><button type="submit">Save</button></p>
-    </form>
-    <a href="{{ url_for('tasks.task_list') }}">Back</a>
+    <div class="container">
+        <h1>Редактировать задачу</h1>
+        <form action="{{ url_for('tasks.edit_task', task_id=task.id) }}" method="post">
+            <div class="form-group">
+                <label for="title">Название задачи</label>
+                <input type="text" id="title" name="title" value="{{ task.title }}" required>
+            </div>
+            <div class="form-group">
+                <label for="theme_prompt">Тема задачи (Google Docs URL)</label>
+                <input type="url" id="theme_prompt" name="theme_prompt" value="{{ task.theme_prompt }}" required>
+            </div>
+            <div class="form-group">
+                <label for="article_prompt">Статья задачи (Google Docs URL)</label>
+                <input type="url" id="article_prompt" name="article_prompt" value="{{ task.article_prompt }}" required>
+            </div>
+            <div class="form-group">
+                <label for="image_prompt">Картинка задачи (Google Docs URL)</label>
+                <input type="url" id="image_prompt" name="image_prompt" value="{{ task.image_prompt }}" required>
+            </div>
+            <div class="form-group">
+                <label for="theme_list">Список тем (Google Sheets URL)</label>
+                <input type="url" id="theme_list" name="theme_list" value="{{ task.theme_list }}" required>
+            </div>
+            <div class="form-group">
+                <label for="article_list">Список статей (Google Sheets URL)</label>
+                <input type="url" id="article_list" name="article_list" value="{{ task.article_list }}" required>
+            </div>
+            <div class="form-group">
+                <label for="platform_id">Платформа</label>
+                <div style="display: flex; align-items: center;">
+                    <select id="platform_id" name="platform_id">
+                        <option value="" {% if not task.platform_id %}selected{% endif %}>None</option>
+                        {% for platform in platforms %}
+                            <option value="{{ platform.id }}" {% if platform.id == task.platform_id %}selected{% endif %}>{{ platform.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <a href="{{ url_for('platforms.add_platform') }}" class="btn btn-secondary" style="margin-left: 10px;">Добавить платформу</a>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="schedule_time">Время расписания (HH:MM)</label>
+                <input type="time" id="schedule_time" name="schedule_time" value="{{ task.schedule_time }}" required>
+            </div>
+            <div class="form-group">
+                <label for="schedule_days">Дни расписания</label>
+                <input type="number" id="schedule_days" name="schedule_days" value="{{ task.schedule_days }}" step="0.1" required>
+            </div>
+            <div class="form-group">
+                <label>Статус</label>
+                <input type="radio" id="is_active_active" name="is_active" value="active" {% if task.is_active == 'active' %}checked{% endif %}>
+                <label for="is_active_active">Активный</label>
+                <input type="radio" id="is_active_inactive" name="is_active" value="inactive" {% if task.is_active == 'inactive' %}checked{% endif %}>
+                <label for="is_active_inactive">Неактивный</label>
+            </div>
+            <button type="submit">Сохранить изменения</button>
+        </form>
+        <a href="{{ url_for('tasks.task_list') }}">Назад</a>
+    </div>
 </body>
 </html>
-<script>
-    $(document).ready(function() {
-        $('#platforms').select2({
-            placeholder: "Select platforms",
-            width: '100%'
-        });
-    });
-</script>
