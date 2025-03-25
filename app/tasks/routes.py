@@ -16,36 +16,37 @@ def task_list():
 def add_task():
     if request.method == 'POST':
         try:
-            title = request.form['title']
-            theme_prompt = request.form['theme_prompt']
-            article_prompt = request.form['article_prompt']
-            image_prompt = request.form['image_prompt']
-            theme_list = request.form['theme_list']
-            article_list = request.form['article_list']
-            platforms = request.form.getlist('platforms')  # Получаем список ID
-            selected_platforms = Platform.query.filter(Platform.id.in_(platforms)).all()
-            schedule_time = request.form['schedule_time']
-            schedule_days = request.form['schedule_days']
-            is_active = request.form['is_active'] == 'active'
-            schedule = f"{schedule_time} every {schedule_days} days"
-            new_task = Task(
-                title=title,
-                theme_prompt=theme_prompt,
-                article_prompt=article_prompt,
-                image_prompt=image_prompt,
-                theme_list=theme_list,
-                article_list=article_list,
-                schedule=schedule,
-                is_active=is_active,
-                platforms=selected_platforms  # Теперь связь работает
-            )
+            data = request.get_json()
+            
+            # Разрешенные поля
+            allowed_fields = {
+                'title', 'theme_prompt', 
+                'article_prompt', 'image_prompt',
+                'theme_list'
+            }
+            
+            # Фильтрация полей
+            task_data = {
+                key: data.get(key) 
+                for key in allowed_fields 
+                if key in data
+            }
+            
+            new_task = Task(**task_data)
             db.session.add(new_task)
             db.session.commit()
-            flash('Task added successfully')
-            return redirect(url_for('tasks.task_list'))
+            
+            return jsonify({
+                "status": "success",
+                "task_id": new_task.id
+            }), 201
+            
         except Exception as e:
-            print(f"Error: {str(e)}")  # Выведет ошибку в консоль
-            raise  # Покажет traceback в логах
+            db.session.rollback()
+            return jsonify({
+                "status": "error",
+                "message": str(e)
+            }), 400
     platforms = Platform.query.all()
     return render_template('tasks/add.html', platforms=platforms)
 
