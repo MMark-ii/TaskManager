@@ -35,14 +35,14 @@
         </p>
         <p>
             <label for="platforms">Platforms:</label><br>
-            <select name="platforms" id="platforms" multiple required>  <!-- Добавлен multiple -->
+            <select name="platforms" id="platforms" multiple>
                 {% for platform in all_platforms %}
-                    <option value="{{ platform.id }}" 
-                        {% if platform.id in task_platform_ids %}selected{% endif %}>
-                        {{ platform.name }}
-                    </option>
+                  <option value="{{ platform.id }}"
+                    {% if platform in task.platforms %}selected{% endif %}>
+                    {{ platform.name }}
+                  </option>
                 {% endfor %}
-            </select>
+              </select>
             <a href="{{ url_for('platforms.platform_list') }}">Edit Platforms</a>
         </p>
         <p>
@@ -63,3 +63,11 @@
     <a href="{{ url_for('tasks.task_list') }}">Back</a>
 </body>
 </html>
+<script>
+    $(document).ready(function() {
+        $('#platforms').select2({
+            placeholder: "Select platforms",
+            width: '100%'
+        });
+    });
+</script>

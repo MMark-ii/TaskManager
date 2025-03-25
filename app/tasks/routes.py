@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required
-from .models import Task
+from .models import Task, Platform  # Добавьте импорт модели Platform
 from app import db
 
 tasks_bp = Blueprint('tasks', __name__, template_folder='templates')
@@ -21,7 +21,8 @@ def add_task():
         image_prompt = request.form['image_prompt']
         theme_list = request.form['theme_list']
         article_list = request.form['article_list']
-        platforms = request.form.getlist('platforms')
+        platforms = request.form.getlist('platforms')  # Получаем список ID
+        selected_platforms = Platform.query.filter(Platform.id.in_(platforms)).all()
         schedule_time = request.form['schedule_time']
         schedule_days = request.form['schedule_days']
         is_active = request.form['is_active'] == 'active'
@@ -33,9 +34,9 @@ def add_task():
             image_prompt=image_prompt,
             theme_list=theme_list,
             article_list=article_list,
-            platforms=platforms,
             schedule=schedule,
-            is_active=is_active
+            is_active=is_active,
+            platforms=selected_platforms  # Теперь связь работает
         )
         db.session.add(new_task)
         db.session.commit()

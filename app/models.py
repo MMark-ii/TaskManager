@@ -1,12 +1,11 @@
 from datetime import datetime
 from app import db  # Импортируйте экземпляр SQLAlchemy из app/__init__.py
-from app import db
 
 # Ассоциативная таблица для связи many-to-many между Task и Platform
-task_platform = db.Table(  # ✅ Правильное объявление ассоциативной таблицы
+task_platform = db.Table(
     'task_platform',
-    db.Column('task_id', db.Integer, db.ForeignKey('task.id')),
-    db.Column('platform_id', db.Integer, db.ForeignKey('platform.id'))
+    db.Column('task_id', db.Integer, db.ForeignKey('task.id'), primary_key=True),
+    db.Column('platform_id', db.Integer, db.ForeignKey('platform.id'), primary_key=True)
 )
 
 class Task(db.Model):
@@ -22,7 +21,8 @@ class Task(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    platforms = db.relationship('Platform', secondary=task_platform, backref='tasks')  # ✅ Корректная связь
+    platforms = db.relationship('Platform', secondary=task_platform, backref='tasks')
+    
 
 class Platform(db.Model):
     id = db.Column(db.Integer, primary_key=True)
