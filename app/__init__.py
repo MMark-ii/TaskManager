@@ -41,9 +41,11 @@ def create_app():
         from .platforms.routes import platforms_bp
         
         app.register_blueprint(auth_bp)
-        app.register_blueprint(tasks_bp)
+        app.register_blueprint(tasks_bp, url_prefix='/tasks')  # Добавьте url_prefix
         app.register_blueprint(platforms_bp)
     
     app.logger.setLevel(logging.DEBUG)
+    handler = logging.FileHandler('app.log')
+    app.logger.addHandler(handler)
     
     return app
