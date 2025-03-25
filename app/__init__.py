@@ -3,13 +3,14 @@
 from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from datetime import datetime
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 
 @login_manager.user_loader
 def load_user(user_id):
-    from .auth.models import User  # Переместите импорт сюда
+    from .auth.models import User
     return User.query.get(int(user_id))
 
 def create_app():
@@ -28,6 +29,7 @@ def create_app():
         return str(e), 500
     
     with app.app_context():
+        db.create_all()
         from .auth.routes import auth_bp
         from .tasks.routes import tasks_bp
         from .platforms.routes import platforms_bp

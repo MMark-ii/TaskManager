@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required
-from .models import Task, Platform  # Добавьте импорт модели Platform
+from .models import Task, Platform
 from app import db
 
 tasks_bp = Blueprint('tasks', __name__, template_folder='templates')
@@ -42,7 +42,8 @@ def add_task():
         db.session.commit()
         flash('Task added successfully')
         return redirect(url_for('tasks.task_list'))
-    return render_template('tasks/add.html')
+    platforms = Platform.query.all()
+    return render_template('tasks/add.html', platforms=platforms)
 
 @tasks_bp.route('/tasks/edit/<int:task_id>', methods=['GET', 'POST'])
 @login_required
@@ -63,7 +64,8 @@ def edit_task(task_id):
         db.session.commit()
         flash('Task updated successfully')
         return redirect(url_for('tasks.task_list'))
-    return render_template('tasks/edit.html', task=task)
+    platforms = Platform.query.all()
+    return render_template('tasks/edit.html', task=task, platforms=platforms)
 
 @tasks_bp.route('/tasks/log/<int:task_id>')
 @login_required
@@ -80,6 +82,26 @@ def delete_task(task_id):
     db.session.commit()
     flash('Task deleted successfully')
     return redirect(url_for('tasks.task_list'))
+
+@tasks_bp.route('/platforms', methods=['POST'])
+def create_platform():
+    data = request.get_json()
+    new_platform = Platform(
+        name=data['name'],
+        description=data.get('description')
+    )
+    db.session.add(new_platform)
+    db.session.commit()
+    return jsonify({'message': 'Platform created'}), 201
+
+@tasks_bp.route('/platforms/<int:platform_id>', methods=['GET'])
+def get_platform(platform_id):
+    platform = Platform.query.get_or_404(platform_id)
+    return jsonify({
+        'name': platform.name,
+        'description': platform.description,
+        'tasks_count': len(platform.tasks)
+    })
 
 @tasks_bp.route('/platforms')
 @login_required

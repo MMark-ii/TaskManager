@@ -1,25 +1,32 @@
 from app import db
 from datetime import datetime
 
-class Task(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    theme_prompt = db.Column(db.String(200), nullable=False)
-    article_prompt = db.Column(db.String(200), nullable=False)
-    image_prompt = db.Column(db.String(200), nullable=False)
-    theme_list = db.Column(db.String(200), nullable=False)
-    article_list = db.Column(db.String(200), nullable=False)
-    schedule = db.Column(db.String(100), nullable=False)
-    is_active = db.Column(db.Boolean, default=True)
-    platforms = db.relationship('Platform', secondary='task_platform', backref='tasks')
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
 class Platform(db.Model):
+    __tablename__ = 'platforms'
+    
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Связь с задачами (один-ко-многим)
+    tasks = db.relationship('Task', back_populates='platform', cascade='all, delete-orphan')
 
-task_platform = db.Table('task_platform',
-    db.Column('task_id', db.Integer, db.ForeignKey('task.id'), primary_key=True),
-    db.Column('platform_id', db.Integer, db.ForeignKey('platform.id'), primary_key=True)
-)
+    def __repr__(self):
+        return f'<Platform {self.name}>'
+
+class Task(db.Model):
+    __tablename__ = 'tasks'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.Text)
+    is_completed = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Связь с платформой
+    platform_id = db.Column(db.Integer, db.ForeignKey('platforms.id'))
+    platform = db.relationship('Platform', back_populates='tasks')
+    
+    def __repr__(self):
+        return f'<Task {self.title}>'
