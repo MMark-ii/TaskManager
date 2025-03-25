@@ -27,7 +27,7 @@ def create_app():
     
     @app.route('/favicon.ico')
     def favicon():
-        return app.send_static_file('favicon.ico')
+        return app.send_static_file('favicon.ico'), 200, {'Content-Type': 'image/x-icon'}
     
     @app.errorhandler(Exception)
     def handle_exception(e):
@@ -41,7 +41,7 @@ def create_app():
         from .platforms.routes import platforms_bp
         
         app.register_blueprint(auth_bp)
-        app.register_blueprint(tasks_bp, url_prefix='/tasks')  # Добавьте url_prefix
+        app.register_blueprint(tasks_bp, url_prefix='/tasks')  # Убедитесь, что только одна регистрация blueprint
         app.register_blueprint(platforms_bp)
     
     app.logger.setLevel(logging.DEBUG)
