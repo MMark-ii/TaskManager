@@ -4,6 +4,7 @@ from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from datetime import datetime
+import logging
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -24,8 +25,13 @@ def create_app():
     def index():
         return redirect(url_for('auth.login'))
     
+    @app.route('/favicon.ico')
+    def favicon():
+        return app.send_static_file('favicon.ico')
+    
     @app.errorhandler(Exception)
     def handle_exception(e):
+        app.logger.error(f"Error: {str(e)}")
         return str(e), 500
     
     with app.app_context():
@@ -37,5 +43,7 @@ def create_app():
         app.register_blueprint(auth_bp)
         app.register_blueprint(tasks_bp)
         app.register_blueprint(platforms_bp)
-        
+    
+    app.logger.setLevel(logging.DEBUG)
+    
     return app

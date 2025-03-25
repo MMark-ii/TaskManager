@@ -15,33 +15,37 @@ def task_list():
 @login_required
 def add_task():
     if request.method == 'POST':
-        title = request.form['title']
-        theme_prompt = request.form['theme_prompt']
-        article_prompt = request.form['article_prompt']
-        image_prompt = request.form['image_prompt']
-        theme_list = request.form['theme_list']
-        article_list = request.form['article_list']
-        platforms = request.form.getlist('platforms')  # Получаем список ID
-        selected_platforms = Platform.query.filter(Platform.id.in_(platforms)).all()
-        schedule_time = request.form['schedule_time']
-        schedule_days = request.form['schedule_days']
-        is_active = request.form['is_active'] == 'active'
-        schedule = f"{schedule_time} every {schedule_days} days"
-        new_task = Task(
-            title=title,
-            theme_prompt=theme_prompt,
-            article_prompt=article_prompt,
-            image_prompt=image_prompt,
-            theme_list=theme_list,
-            article_list=article_list,
-            schedule=schedule,
-            is_active=is_active,
-            platforms=selected_platforms  # Теперь связь работает
-        )
-        db.session.add(new_task)
-        db.session.commit()
-        flash('Task added successfully')
-        return redirect(url_for('tasks.task_list'))
+        try:
+            title = request.form['title']
+            theme_prompt = request.form['theme_prompt']
+            article_prompt = request.form['article_prompt']
+            image_prompt = request.form['image_prompt']
+            theme_list = request.form['theme_list']
+            article_list = request.form['article_list']
+            platforms = request.form.getlist('platforms')  # Получаем список ID
+            selected_platforms = Platform.query.filter(Platform.id.in_(platforms)).all()
+            schedule_time = request.form['schedule_time']
+            schedule_days = request.form['schedule_days']
+            is_active = request.form['is_active'] == 'active'
+            schedule = f"{schedule_time} every {schedule_days} days"
+            new_task = Task(
+                title=title,
+                theme_prompt=theme_prompt,
+                article_prompt=article_prompt,
+                image_prompt=image_prompt,
+                theme_list=theme_list,
+                article_list=article_list,
+                schedule=schedule,
+                is_active=is_active,
+                platforms=selected_platforms  # Теперь связь работает
+            )
+            db.session.add(new_task)
+            db.session.commit()
+            flash('Task added successfully')
+            return redirect(url_for('tasks.task_list'))
+        except Exception as e:
+            print(f"Error: {str(e)}")  # Выведет ошибку в консоль
+            raise  # Покажет traceback в логах
     platforms = Platform.query.all()
     return render_template('tasks/add.html', platforms=platforms)
 
@@ -71,7 +75,6 @@ def edit_task(task_id):
 @login_required
 def task_log(task_id):
     task = Task.query.get_or_404(task_id)
-    # Здесь вы можете добавить логику для отображения журнала задачи
     return render_template('tasks/log.html', task=task)
 
 @tasks_bp.route('/tasks/delete/<int:task_id>', methods=['POST'])
